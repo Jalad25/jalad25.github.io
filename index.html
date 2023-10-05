@@ -1,0 +1,247 @@
+<html>
+<body>
+    
+</body>
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const params = Object.fromEntries(urlParams);
+    const windowWidth = window.innerWidth;
+    const fullSizeWidth = Math.floor(windowWidth - (windowWidth * 0.15))
+
+    const title = params["title"].replaceAll('-', ' ');
+    const xtitle = params["xtitle"].replaceAll('-', ' ');
+    const ytitle = params["ytitle"].replaceAll('-', ' ');
+    const xmax = parseInt(params["xmax"]);
+    const ymax = parseInt(params["ymax"]);
+    const tickSpacing = parseInt(params["tickspacing"]);
+
+    const chartType = params["charttype"];
+    let data = [];
+    if (chartType === "sidebar") {
+        for(i = 0; i < xmax; i++) {
+            data.push({
+                label: params["data[" + i + "].label"].replaceAll('-', ' '),
+                value: parseInt(params["data[" + i + "].value"]),
+                backgroundColor: params["data[" + i + "].backgroundcolor"],
+                textColor: params["data[" + i + "].textcolor"]
+            });
+        }
+    } else if (chartType === "monthDayFill") {
+        for(i = 0; i < xmax; i++) {
+            var tempValues = [];
+            tempValues = params["data[" + i + "].values"].split(',').map((v) => { return parseInt(v); }).sort((a, b) => (a - b));
+            
+            //Add null in array where day missing
+            var values = [];
+            for(j = 1; j <= ymax; j++) {
+                if (tempValues.find((v) => v === j)) {
+                    values.push(j);
+                } else {
+                    values.push(null);
+                }
+            }
+
+            data.push({
+                label: params["data[" + i + "].label"].replaceAll('-', ' '),
+                values: values,
+                backgroundColor: params["data[" + i + "].backgroundcolor"]
+            });
+        }
+    }
+
+    //chart data
+    var chartjson = {
+      "title": title,
+      "data": data,
+      "xtitle": xtitle,
+      "ytitle": ytitle,
+      "ymax": ymax,
+      "xmax": xmax,
+      "tickSpacing": tickSpacing
+    };
+
+    //Create container
+    var container = document.createElement('div');
+    
+    //Add title
+    var chartTitle = document.createElement('h2');
+    chartTitle.innerHTML = title;
+    chartTitle.style.textAlign = "center";
+    container.appendChild(chartTitle);
+
+    //Create chart based on type
+    if (chartType === "sidebar") {
+        //Create table for sidebar chart
+        var sidebarChart = document.createElement('table');
+
+        //Determine  of each cell
+        var yCellLabelSize = 20;
+        var cellLabelSize = ((fullSizeWidth * 100) / 500)-20;
+        var cellValueSize = ((fullSizeWidth * 400) / 500)-20;
+
+        //Add data rows
+        for(i = 0; i < chartjson.xmax; i++) {
+            var dataRow = document.createElement("tr");
+            var yAxisLabel = document.createElement("td");
+            var dataCellLabel = document.createElement("td");
+            var dataCellValue = document.createElement("td");
+            var dataCellDiv = document.createElement("div");
+
+            if (i === 0) {
+                var yAxisLabel = document.createElement("td");
+                yAxisLabel.setAttribute("rowspan", chartjson.xmax);
+                yAxisLabel.style.width = yCellLabelSize.toString() + "px";
+                yAxisLabel.innerText = chartjson.ytitle;
+                yAxisLabel.style.fontWeight = "bold";
+                yAxisLabel.style.textAlign = "center";
+                yAxisLabel.style.writingMode = "vertical-rl";
+                yAxisLabel.style.textOrientation = "mixed";
+                dataRow.appendChild(yAxisLabel);
+            }
+
+            dataCellLabel.style.width = cellLabelSize.toString() + "px";
+            dataCellLabel.style.textAlign = "right";
+            dataCellLabel.style.paddingRight = "10px";
+            dataCellLabel.style.borderRight = "1px solid black";
+            dataCellLabel.innerText = chartjson.data[i].label;
+            dataRow.appendChild(dataCellLabel);
+            dataCellDiv.style.backgroundColor = chartjson.data[i].backgroundColor;
+            dataCellDiv.style.width = (((chartjson.data[i].value * cellValueSize) / chartjson.ymax) - 5).toString() + "px";
+            dataCellDiv.style.height = "50px";
+            dataCellDiv.style.display = "table-cell";
+            dataCellDiv.innerText = chartjson.data[i].value;
+            dataCellDiv.style.color = chartjson.data[i].textColor;
+            dataCellDiv.style.verticalAlign = "middle";
+            dataCellDiv.style.textAlign = "right";
+            dataCellDiv.style.paddingRight = "5px";
+            dataCellValue.appendChild(dataCellDiv);
+            dataCellValue.style.width = cellValueSize.toString() + "px";
+            dataRow.appendChild(dataCellValue);
+            sidebarChart.appendChild(dataRow);
+        }
+
+        //Add x axis markers
+        var xAxisRow = document.createElement("tr");
+        var xAxisLabelCell = document.createElement("td");
+        var xAxisTickCell = document.createElement("td");
+
+        //Set Label cell
+        var xAxisBlankCell = document.createElement("td");
+        xAxisBlankCell.style.margin = "0px";
+        xAxisBlankCell.style.padding = "0px";
+        xAxisRow.appendChild(xAxisBlankCell);
+        xAxisLabelCell.style.borderTop = "1px solid black";
+        xAxisRow.appendChild(xAxisLabelCell);
+
+        //Create ticks every x px within div
+        var numberOfPieces = Math.floor(chartjson.ymax/chartjson.tickSpacing);
+        for(i = 1; i <= numberOfPieces; i++) {
+            var tickDiv = document.createElement("div");
+            tickDiv.style.display = "table-cell";
+            tickDiv.style.border = "none";
+            tickDiv.style.borderRight = "1px solid black";
+            tickDiv.style.margin = "0px";
+            tickDiv.style.padding = "0px";
+            tickDiv.style.width = Math.floor(cellValueSize/numberOfPieces).toString() + "px";
+            tickDiv.style.height = "20px";
+            tickDiv.innerText = Math.floor(i * (chartjson.ymax/numberOfPieces));
+            tickDiv.style.textAlign = "right";
+            tickDiv.style.paddingRight = "5px";
+            xAxisTickCell.appendChild(tickDiv);
+        }
+        xAxisTickCell.style.borderTop = "1px solid black";
+        xAxisRow.appendChild(xAxisTickCell);
+
+        sidebarChart.appendChild(xAxisRow);
+        container.appendChild(sidebarChart);
+    } 
+    else if (chartType === "monthDayFill") {
+        //Create table for sidebar chart
+        var sidebarChart = document.createElement('table');
+
+        //Determine  of each cell
+        var yCellLabelSize = 20;
+        var cellLabelSize = ((fullSizeWidth * 100) / 500)-20;
+        var cellValueSize = ((fullSizeWidth * 400) / 500)-20;
+
+        //Add data
+        for(i = 0; i < chartjson.xmax; i++) {
+            var dataRow = document.createElement("tr");
+            var yAxisLabel = document.createElement("td");
+            var dataCellLabel = document.createElement("td");
+            var dataCellValue = document.createElement("td");
+            var dataCellDiv = document.createElement("div");
+
+            if (i === 0) {
+                var yAxisLabel = document.createElement("td");
+                yAxisLabel.setAttribute("rowspan", chartjson.xmax);
+                yAxisLabel.style.width = yCellLabelSize.toString() + "px";
+                yAxisLabel.innerText = chartjson.ytitle;
+                yAxisLabel.style.fontWeight = "bold";
+                yAxisLabel.style.textAlign = "center";
+                yAxisLabel.style.writingMode = "vertical-rl";
+                yAxisLabel.style.textOrientation = "mixed";
+                dataRow.appendChild(yAxisLabel);
+            }
+
+            dataCellLabel.style.width = cellLabelSize.toString() + "px";
+            dataCellLabel.style.textAlign = "right";
+            dataCellLabel.style.paddingRight = "10px";
+            dataCellLabel.style.borderRight = "1px solid black";
+            dataCellLabel.innerText = chartjson.data[i].label;
+            dataRow.appendChild(dataCellLabel);
+
+            for(j = 0; j < chartjson.ymax; j++) {
+                var fillDiv = document.createElement("div");
+                var fillCell = document.createElement("td");
+                if (chartjson.data[i].values[j] !== null) {
+                    fillCell.style.backgroundColor = chartjson.data[i].backgroundColor;
+                }
+                fillCell.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
+                fillCell.style.height = "20px";
+                dataRow.appendChild(fillCell);
+            }
+            
+            sidebarChart.appendChild(dataRow);
+        }
+
+        //Add x axis markers
+        var xAxisRow = document.createElement("tr");
+        var xAxisLabelCell = document.createElement("td");
+        var xAxisTickCell = document.createElement("td");
+
+        //Set Label cell
+        var xAxisBlankCell = document.createElement("td");
+        xAxisBlankCell.style.margin = "0px";
+        xAxisBlankCell.style.padding = "0px";
+        xAxisRow.appendChild(xAxisBlankCell);
+        xAxisLabelCell.style.borderTop = "1px solid black";
+        xAxisRow.appendChild(xAxisLabelCell);
+
+        //Create ticks every x px within div
+        for(i = 1; i <= chartjson.ymax; i++) {
+            var tickDiv = document.createElement("div");
+            tickDiv.style.display = "table-cell";
+            tickDiv.style.border = "none";
+            tickDiv.style.borderRight = "1px solid black";
+            tickDiv.style.margin = "0px";
+            tickDiv.style.padding = "0px";
+            tickDiv.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
+            tickDiv.style.height = "20px";
+            tickDiv.innerText = i;
+            tickDiv.style.textAlign = "right";
+            tickDiv.style.paddingRight = "5px";
+            xAxisTickCell.appendChild(tickDiv);
+        }
+        xAxisTickCell.setAttribute("colspan", chartjson.ymax);
+        xAxisTickCell.style.borderTop = "1px solid black";
+        xAxisRow.appendChild(xAxisTickCell);
+
+        sidebarChart.appendChild(xAxisRow);
+
+        container.appendChild(sidebarChart);
+    }
+
+    document.body.innerHTML += container.outerHTML;
+</script>
+</html>
