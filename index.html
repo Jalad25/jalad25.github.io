@@ -14,6 +14,7 @@
     const xmax = parseInt(params["xmax"]);
     const ymax = parseInt(params["ymax"]);
     const tickSpacing = parseInt(params["tickspacing"]);
+    const backgroundColor = params["backgroundcolor"];
 
     const chartType = params["charttype"];
     let data = [];
@@ -57,11 +58,13 @@
       "ytitle": ytitle,
       "ymax": ymax,
       "xmax": xmax,
-      "tickSpacing": tickSpacing
+      "tickSpacing": tickSpacing,
+      "backgroundColor": backgroundColor
     };
 
     //Create container
     var container = document.createElement('div');
+    container.style.backgroundColor = chartjson.backgroundColor;
     
     //Add title
     var chartTitle = document.createElement('h2');
