@@ -208,7 +208,6 @@
         //Add x axis markers
         var xAxisRow = document.createElement("tr");
         var xAxisLabelCell = document.createElement("td");
-        var xAxisTickCell = document.createElement("td");
 
         //Set Label cell
         var xAxisBlankCell = document.createElement("td");
@@ -218,24 +217,19 @@
         xAxisLabelCell.style.borderTop = "1px solid black";
         xAxisRow.appendChild(xAxisLabelCell);
 
-        //Create ticks every x px within div
+        //Create secitons for every day
         for(i = 1; i <= chartjson.ymax; i++) {
-            var tickDiv = document.createElement("div");
-            tickDiv.style.display = "table-cell";
-            tickDiv.style.border = "none";
-            tickDiv.style.borderRight = "1px solid black";
-            tickDiv.style.margin = "0px";
-            tickDiv.style.padding = "0px";
-            tickDiv.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
-            tickDiv.style.height = "20px";
-            tickDiv.innerText = i;
-            tickDiv.style.textAlign = "right";
-            tickDiv.style.paddingRight = "5px";
-            xAxisTickCell.appendChild(tickDiv);
+            var dayDiv = document.createElement("td");
+            dayDiv.style.borderTop = "1px solid black";
+            dayDiv.style.borderRight = "1px solid black";
+            dayDiv.style.margin = "0px";
+            dayDiv.style.padding = "0px";
+            dayDiv.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
+            dayDiv.style.height = "20px";
+            dayDiv.innerText = i;
+            dayDiv.style.textAlign = "center";
+            xAxisRow.appendChild(dayDiv);
         }
-        xAxisTickCell.setAttribute("colspan", chartjson.ymax);
-        xAxisTickCell.style.borderTop = "1px solid black";
-        xAxisRow.appendChild(xAxisTickCell);
 
         sidebarChart.appendChild(xAxisRow);
 
