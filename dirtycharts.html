@@ -15,6 +15,7 @@
     const ymax = parseInt(params["ymax"]);
     const tickSpacing = parseInt(params["tickspacing"]);
     const backgroundColor = params["backgroundcolor"];
+    const textColor = params["textcolor"];
 
     const chartType = params["charttype"];
     let data = [];
@@ -60,7 +61,8 @@
       "ymax": ymax,
       "xmax": xmax,
       "tickSpacing": tickSpacing,
-      "backgroundColor": backgroundColor
+      "backgroundColor": backgroundColor,
+      "textColor": textColor
     };
 
     //Create container
@@ -68,6 +70,7 @@
     container.style.paddingTop = "20px";
     container.style.paddingBottom = "20px";
     container.style.backgroundColor = chartjson.backgroundColor;
+    container.style.color = chartjson.textColor;
     
     //Add title
     var chartTitle = document.createElement('h2');
@@ -75,15 +78,17 @@
     chartTitle.style.textAlign = "center";
     container.appendChild(chartTitle);
 
+    //Constants
+    var borderConfig = "1px solid " + chartjson.textColor;
+    var yCellLabelSize = 30;
+    var cellLabelSize = ((fullSizeWidth * 100) / 500)-yCellLabelSize;
+    var cellValueSize = ((fullSizeWidth * 400) / 500)-yCellLabelSize;
+
     //Create chart based on type
     if (chartType === "sidebar") {
         //Create table for sidebar chart
         var sidebarChart = document.createElement('table');
-
-        //Determine  of each cell
-        var yCellLabelSize = 40;
-        var cellLabelSize = ((fullSizeWidth * 100) / 500)-yCellLabelSize;
-        var cellValueSize = ((fullSizeWidth * 400) / 500)-yCellLabelSize;
+        sidebarChart.style.color = chartjson.textColor;
 
         //Add data rows
         for(i = 0; i < chartjson.xmax; i++) {
@@ -108,7 +113,7 @@
             dataCellLabel.style.width = cellLabelSize.toString() + "px";
             dataCellLabel.style.textAlign = "right";
             dataCellLabel.style.paddingRight = "10px";
-            dataCellLabel.style.borderRight = "1px solid black";
+            dataCellLabel.style.borderRight = borderConfig;
             dataCellLabel.innerText = chartjson.data[i].label;
             dataRow.appendChild(dataCellLabel);
             dataCellDiv.style.backgroundColor = chartjson.data[i].backgroundColor;
@@ -136,7 +141,7 @@
         xAxisBlankCell.style.margin = "0px";
         xAxisBlankCell.style.padding = "0px";
         xAxisRow.appendChild(xAxisBlankCell);
-        xAxisLabelCell.style.borderTop = "1px solid black";
+        xAxisLabelCell.style.borderTop = borderConfig;
         xAxisRow.appendChild(xAxisLabelCell);
 
         //Create ticks every x px within div
@@ -145,7 +150,7 @@
             var tickDiv = document.createElement("div");
             tickDiv.style.display = "table-cell";
             tickDiv.style.border = "none";
-            tickDiv.style.borderRight = "1px solid black";
+            tickDiv.style.borderRight = borderConfig;
             tickDiv.style.margin = "0px";
             tickDiv.style.padding = "0px";
             tickDiv.style.width = Math.floor(cellValueSize/numberOfPieces).toString() + "px";
@@ -155,7 +160,7 @@
             tickDiv.style.paddingRight = "5px";
             xAxisTickCell.appendChild(tickDiv);
         }
-        xAxisTickCell.style.borderTop = "1px solid black";
+        xAxisTickCell.style.borderTop = borderConfig;
         xAxisRow.appendChild(xAxisTickCell);
 
         sidebarChart.appendChild(xAxisRow);
@@ -164,10 +169,7 @@
     else if (chartType === "monthDayFill") {
         //Create table for sidebar chart
         var sidebarChart = document.createElement('table');
-
-        //Determine  of each cell
-        var cellLabelSize = ((fullSizeWidth * 100) / 500)-30;
-        var cellValueSize = ((fullSizeWidth * 400) / 500)-30;
+        sidebarChart.style.color = chartjson.textColor;
 
         var yAxisLabelRow = document.createElement("tr");
         var yAxisLabelCell = document.createElement("td");
@@ -189,7 +191,7 @@
             dataCellLabel.style.width = cellLabelSize.toString() + "px";
             dataCellLabel.style.textAlign = "right";
             dataCellLabel.style.paddingRight = "10px";
-            dataCellLabel.style.borderRight = "1px solid black";
+            dataCellLabel.style.borderRight = borderConfig;
             dataCellLabel.innerText = chartjson.data[i].label;
             dataRow.appendChild(dataCellLabel);
 
@@ -223,8 +225,8 @@
         //Create secitons for every day
         for(i = 1; i <= chartjson.ymax; i++) {
             var dayCell = document.createElement("td");
-            dayCell.style.borderTop = "1px solid black";
-            dayCell.style.borderRight = "1px solid black";
+            dayCell.style.borderTop = borderConfig;
+            dayCell.style.borderRight = borderConfig;
             dayCell.style.margin = "0px";
             dayCell.style.padding = "0px";
             dayCell.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
