@@ -27,7 +27,8 @@
                 textColor: params["data[" + i + "].textcolor"]
             });
         }
-    } else if (chartType === "monthDayFill") {
+    } 
+    else if (chartType === "monthDayFill") {
         for(i = 0; i < xmax; i++) {
             var tempValues = [];
             tempValues = params["data[" + i + "].values"].split(',').map((v) => { return parseInt(v); }).sort((a, b) => (a - b));
@@ -64,8 +65,8 @@
 
     //Create container
     var container = document.createElement('div');
-    container.style.marginTop = "20px";
-    container.style.marginBottom = "20px";
+    container.style.paddingTop = "20px";
+    container.style.paddingBottom = "20px";
     container.style.backgroundColor = chartjson.backgroundColor;
     
     //Add title
@@ -211,32 +212,38 @@
         }
 
         //Add x axis markers
-        var xAxisRow = document.createElement("tr");
-        var xAxisLabelCell = document.createElement("td");
+        var xAxisMarkerRow = document.createElement("tr");
 
         //Set Label cell
         var xAxisBlankCell = document.createElement("td");
+        xAxisBlankCell.setAttribute("colspan", 2);
         xAxisBlankCell.style.margin = "0px";
         xAxisBlankCell.style.padding = "0px";
-        xAxisRow.appendChild(xAxisBlankCell);
-        xAxisLabelCell.style.borderTop = "1px solid black";
-        xAxisRow.appendChild(xAxisLabelCell);
+        xAxisMarkerRow.appendChild(xAxisBlankCell);
 
         //Create secitons for every day
         for(i = 1; i <= chartjson.ymax; i++) {
-            var dayDiv = document.createElement("td");
-            dayDiv.style.borderTop = "1px solid black";
-            dayDiv.style.borderRight = "1px solid black";
-            dayDiv.style.margin = "0px";
-            dayDiv.style.padding = "0px";
-            dayDiv.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
-            dayDiv.style.height = "20px";
-            dayDiv.innerText = i;
-            dayDiv.style.textAlign = "center";
-            xAxisRow.appendChild(dayDiv);
+            var dayCell = document.createElement("td");
+            dayCell.style.borderTop = "1px solid black";
+            dayCell.style.borderRight = "1px solid black";
+            dayCell.style.margin = "0px";
+            dayCell.style.padding = "0px";
+            dayCell.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
+            dayCell.style.height = "20px";
+            dayCell.innerText = i;
+            dayCell.style.textAlign = "center";
+            xAxisMarkerRow.appendChild(dayCell);
         }
+        sidebarChart.appendChild(xAxisMarkerRow);
 
-        sidebarChart.appendChild(xAxisRow);
+        var xAxisLabelRow = document.createElement("tr");
+        var xAxisLabelCell = document.createElement("td");
+        xAxisLabelCell.setAttribute("colspan", chartjson.ymax + 2);
+        xAxisLabelCell.innerText = chartjson.xtitle;
+        xAxisLabelCell.style.fontWeight = "bold";
+        xAxisLabelCell.style.textAlign = "center";
+        xAxisLabelRow.appendChild(xAxisLabelCell);
+        sidebarChart.appendChild(xAxisLabelRow);
 
         container.appendChild(sidebarChart);
     }
