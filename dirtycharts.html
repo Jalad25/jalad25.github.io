@@ -166,9 +166,17 @@
         var sidebarChart = document.createElement('table');
 
         //Determine  of each cell
-        var yCellLabelSize = 40;
-        var cellLabelSize = ((fullSizeWidth * 100) / 500)-yCellLabelSize;
-        var cellValueSize = ((fullSizeWidth * 400) / 500)-yCellLabelSize;
+        var cellLabelSize = ((fullSizeWidth * 100) / 500)-30;
+        var cellValueSize = ((fullSizeWidth * 400) / 500)-30;
+
+        var yAxisLabelRow = document.createElement("tr");
+        var yAxisLabelCell = document.createElement("td");
+        yAxisLabelCell.style.width = cellLabelSize.toString() + "px";
+        yAxisLabelCell.innerText = chartjson.ytitle;
+        yAxisLabelCell.style.fontWeight = "bold";
+        yAxisLabelCell.style.textAlign = "center";
+        yAxisLabelRow.appendChild(yAxisLabelCell);
+        sidebarChart.appendChild(yAxisLabelRow);
 
         //Add data
         for(i = 0; i < chartjson.xmax; i++) {
@@ -177,18 +185,6 @@
             var dataCellLabel = document.createElement("td");
             var dataCellValue = document.createElement("td");
             var dataCellDiv = document.createElement("div");
-
-            if (i === 0) {
-                var yAxisLabel = document.createElement("td");
-                yAxisLabel.setAttribute("rowspan", chartjson.xmax);
-                yAxisLabel.style.width = yCellLabelSize.toString() + "px";
-                yAxisLabel.innerText = chartjson.ytitle;
-                yAxisLabel.style.fontWeight = "bold";
-                yAxisLabel.style.textAlign = "center";
-                yAxisLabel.style.writingMode = "vertical-rl";
-                yAxisLabel.style.textOrientation = "mixed";
-                dataRow.appendChild(yAxisLabel);
-            }
 
             dataCellLabel.style.width = cellLabelSize.toString() + "px";
             dataCellLabel.style.textAlign = "right";
