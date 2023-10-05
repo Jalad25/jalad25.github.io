@@ -196,11 +196,15 @@
             for(j = 0; j < chartjson.ymax; j++) {
                 var fillDiv = document.createElement("div");
                 var fillCell = document.createElement("td");
-                if (chartjson.data[i].values[j] !== null) {
-                    fillCell.style.backgroundColor = chartjson.data[i].backgroundColor;
-                }
                 fillCell.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
                 fillCell.style.height = "20px";
+                fillCell.style.textAlign = "center";
+                fillCell.style.color = chartjson.data[i].backgroundColor;
+                if (chartjson.data[i].values[j] !== null) {
+                    fillCell.innerText = "⦿";
+                } else {
+                    fillCell.innerText = "◯";
+                }
                 dataRow.appendChild(fillCell);
             }
             
