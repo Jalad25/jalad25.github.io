@@ -236,16 +236,13 @@
         }
         sidebarChart.appendChild(xAxisMarkerRow);
 
-        var xAxisLabelRow = document.createElement("tr");
-        var xAxisLabelCell = document.createElement("td");
-        xAxisLabelCell.setAttribute("colspan", chartjson.ymax + 2);
-        xAxisLabelCell.innerText = chartjson.xtitle;
-        xAxisLabelCell.style.fontWeight = "bold";
-        xAxisLabelCell.style.textAlign = "center";
-        xAxisLabelRow.appendChild(xAxisLabelCell);
-        sidebarChart.appendChild(xAxisLabelRow);
-
         container.appendChild(sidebarChart);
+
+        var xAxisLabel = document.createElement("div");
+        xAxisLabel.innerText = chartjson.xtitle;
+        xAxisLabel.style.fontWeight = "bold";
+        xAxisLabel.style.textAlign = "center";
+        container.appendChild(xAxisLabel);
     }
 
     document.body.innerHTML += container.outerHTML;
