@@ -8,32 +8,38 @@
     const windowWidth = window.innerWidth;
     const fullSizeWidth = Math.floor(windowWidth - (windowWidth * 0.15))
 
-    //chart data
+    //Chart data
     var chartjson = {
-        "charttype": params["charttype"],
-        "title": params["title"],
-        "data": null,
-        "xtitle": params["xtitle"],
-        "ytitle": params["ytitle"],
-        "ymax": parseInt(params["ymax"]),
-        "xmax": parseInt(params["xmax"]),
-        "markerSpacing": parseInt(params["markerSpacing"]),
-        "backgroundColor": params["backgroundcolor"],
-        "textColor": params["textcolor"]
+        charttype: parseInt(params["charttype"]),
+        title: params["title"],
+        data: [],
+        xtitle: params["xtitle"],
+        ytitle: params["ytitle"],
+        ymax: parseInt(params["ymax"]),
+        xmax: parseInt(params["xmax"]),
+        markerSpacing: parseInt(params["markerspacing"]),
+        backgroundColor: params["backgroundcolor"],
+        textColor: params["textcolor"]
     };
+
+    //Constants
+    var borderConfig = "1px solid " + chartjson.textColor;
+    var chartWidthMax = 500;
+    var chartYWidthMax = 100;
+    var chartXWidthMax = 400;
+    var numberOfMarkers = Math.floor(chartjson.xmax/chartjson.markerSpacing);
 
     // Build chart data
     let data = [];
     switch (chartjson.charttype) {
         case 0:
-            for(i = 0; i < xmax; i++) {
+            for(i = 0; i < chartjson.ymax; i++) {
                 var tempValues = [];
                 tempValues = params["data[" + i + "].values"].split(',').map((v) => { return parseInt(v); }).sort((a, b) => (a - b));
-                
-                //Add null in array where day missing
+                //Add null in array where missing data point
                 var values = [];
-                for(j = 1; j <= ymax; j++) {
-                    if (tempValues.find((v) => v === j)) {
+                for(j = 1; j <= numberOfMarkers; j++) {
+                    if (tempValues.find((v) => v === j*chartjson.markerSpacing)) {
                         values.push(j);
                     } else {
                         values.push(null);
@@ -48,7 +54,7 @@
             }
             break;
         case 1:
-            for(i = 0; i < xmax; i++) {
+            for(i = 0; i < chartjson.ymax; i++) {
                 data.push({
                     label: params["data[" + i + "].label"].replaceAll('-', ' '),
                     value: parseInt(params["data[" + i + "].value"]),
@@ -58,6 +64,7 @@
             }
             break;
     }
+    chartjson.data = data;
 
     //Create container
     var container = document.createElement('div');
@@ -68,15 +75,9 @@
     
     //Add title
     var chartTitle = document.createElement('h2');
-    chartTitle.innerHTML = title;
+    chartTitle.innerHTML = chartjson.title;
     chartTitle.style.textAlign = "center";
     container.appendChild(chartTitle);
-
-    //Constants
-    var borderConfig = "1px solid " + chartjson.textColor;
-    var chartWidthMax = 500;
-    var chartYWidthMax = 100;
-    var chartXWidthMax = 400;
 
     //Create chart based on type
     switch (chartjson.charttype) {
@@ -116,16 +117,16 @@
                 //Add data cells
                 switch (chartjson.charttype) {
                     case 0:
-                        for(j = 0; j < chartjson.xmax; j++) { 
+                        for(j = 0; j < numberOfMarkers; j++) { 
                             var dataCell = document.createElement("td");
                             dataCell.style.width = Math.floor(xValueSize/chartjson.xmax).toString() + "px";
                             dataCell.style.height = "20px";
                             dataCell.style.textAlign = "center";
                             dataCell.style.color = chartjson.data[i].backgroundColor;
                             if (chartjson.data[i].values[j] !== null) {
-                                fillCell.innerText = "⦿";
+                                dataCell.innerText = "⦿";
                             } else {
-                                fillCell.innerText = "◯";
+                                dataCell.innerText = "◯";
                             }
                             dataRow.appendChild(dataCell);
                         }
@@ -134,8 +135,8 @@
                         var dataCell = document.createElement("td");
                         var dataCellDiv = document.createElement("div");
                         
-                        dataCellDiv.style.backgroundColor = chartjson.data[i].backgroundColor;
-                        dataCellDiv.style.width = (((chartjson.data[i].value * xValueSize) / chartjson.xmax) - 5).toString() + "px";
+                        dataCellDiv.style.backgroundColor = chartjson.data[i].value === 0 ? "none" : chartjson.data[i].backgroundColor;
+                        dataCellDiv.style.width = (((chartjson.data[i].value * xValueSize) / chartjson.xmax) + numberOfMarkers).toString() + "px";
                         dataCellDiv.style.height = "50px";
                         dataCellDiv.style.display = "table-cell";
                         dataCellDiv.innerText = chartjson.data[i].value;
@@ -163,10 +164,9 @@
             xAxisRow.appendChild(xAxisBlankCell);
 
             //Add markers to x-axis
-            var numberOfMarkers = Math.floor(chartjson.xmax/chartjson.markerSpacing);
             switch (chartjson.charttype) {
                 case 0:
-                    for(i = chartjson.markerSpacing; i <= numberOfMarkers; i++) {
+                    for(i = 1; i <= numberOfMarkers; i++) {
                         var xAxisMarkerCell = document.createElement("td");
                         xAxisMarkerCell.style.borderTop = borderConfig;
                         xAxisMarkerCell.style.borderRight = borderConfig;
@@ -181,7 +181,7 @@
                     break;
                 case 1:
                     var xAxisMarkerCell = document.createElement("td");
-                    for(i = chartjson.markerSpacing; i <= numberOfMarkers; i++) {
+                    for(i = 1; i <= numberOfMarkers; i++) {
                         var tickDiv = document.createElement("div");
                         tickDiv.style.display = "table-cell";
                         tickDiv.style.border = "none";
@@ -199,7 +199,7 @@
                     xAxisRow.appendChild(xAxisMarkerCell);
                     break;
             }
-
+            
             // Add x-axis
             chart.appendChild(xAxisRow);
             container.appendChild(chart);
@@ -212,7 +212,7 @@
             container.appendChild(xAxisTitle);
             break;
     }
-    
+    console.log(container);
     document.body.innerHTML += container.outerHTML;
 </script>
 </html>
