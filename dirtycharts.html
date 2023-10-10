@@ -13,13 +13,13 @@
     const ytitle = params["ytitle"].replaceAll('-', ' ');
     const xmax = parseInt(params["xmax"]);
     const ymax = parseInt(params["ymax"]);
-    const tickSpacing = parseInt(params["tickspacing"]);
+    const markerSpacing = parseInt(params["markerSpacing"]);
     const backgroundColor = params["backgroundcolor"];
     const textColor = params["textcolor"];
 
     const chartType = params["charttype"];
     let data = [];
-    if (chartType === "sidebar") {
+    if (chartType === 1) {
         for(i = 0; i < xmax; i++) {
             data.push({
                 label: params["data[" + i + "].label"].replaceAll('-', ' '),
@@ -29,7 +29,7 @@
             });
         }
     } 
-    else if (chartType === "monthDayFill") {
+    else if (chartType === 0) {
         for(i = 0; i < xmax; i++) {
             var tempValues = [];
             tempValues = params["data[" + i + "].values"].split(',').map((v) => { return parseInt(v); }).sort((a, b) => (a - b));
@@ -60,7 +60,7 @@
       "ytitle": ytitle,
       "ymax": ymax,
       "xmax": xmax,
-      "tickSpacing": tickSpacing,
+      "markerSpacing": markerSpacing,
       "backgroundColor": backgroundColor,
       "textColor": textColor
     };
@@ -85,13 +85,13 @@
     var cellValueSize = ((fullSizeWidth * 400) / 500)-yCellLabelSize;
 
     //Create chart based on type
-    if (chartType === "sidebar") {
+    if (chartType === 1) {
         //Create table for sidebar chart
         var sidebarChart = document.createElement('table');
         sidebarChart.style.color = chartjson.textColor;
 
         //Add data rows
-        for(i = 0; i < chartjson.xmax; i++) {
+        for(i = 0; i < chartjson.ymax; i++) {
             var dataRow = document.createElement("tr");
             var yAxisLabel = document.createElement("td");
             var dataCellLabel = document.createElement("td");
@@ -117,7 +117,7 @@
             dataCellLabel.innerText = chartjson.data[i].label;
             dataRow.appendChild(dataCellLabel);
             dataCellDiv.style.backgroundColor = chartjson.data[i].backgroundColor;
-            dataCellDiv.style.width = (((chartjson.data[i].value * cellValueSize) / chartjson.ymax) - 5).toString() + "px";
+            dataCellDiv.style.width = (((chartjson.data[i].value * cellValueSize) / chartjson.xmax) - 5).toString() + "px";
             dataCellDiv.style.height = "50px";
             dataCellDiv.style.display = "table-cell";
             dataCellDiv.innerText = chartjson.data[i].value;
@@ -145,7 +145,7 @@
         xAxisRow.appendChild(xAxisLabelCell);
 
         //Create ticks every x px within div
-        var numberOfPieces = Math.floor(chartjson.ymax/chartjson.tickSpacing);
+        var numberOfPieces = Math.floor(chartjson.xmax/chartjson.markerSpacing);
         for(i = 1; i <= numberOfPieces; i++) {
             var tickDiv = document.createElement("div");
             tickDiv.style.display = "table-cell";
@@ -155,7 +155,7 @@
             tickDiv.style.padding = "0px";
             tickDiv.style.width = Math.floor(cellValueSize/numberOfPieces).toString() + "px";
             tickDiv.style.height = "20px";
-            tickDiv.innerText = Math.floor(i * (chartjson.ymax/numberOfPieces));
+            tickDiv.innerText = Math.floor(i * (chartjson.xmax/numberOfPieces));
             tickDiv.style.textAlign = "right";
             tickDiv.style.paddingRight = "5px";
             xAxisTickCell.appendChild(tickDiv);
@@ -166,7 +166,7 @@
         sidebarChart.appendChild(xAxisRow);
         container.appendChild(sidebarChart);
     } 
-    else if (chartType === "monthDayFill") {
+    else if (chartType === 0) {
         //Create table for sidebar chart
         var sidebarChart = document.createElement('table');
         sidebarChart.style.color = chartjson.textColor;
@@ -195,10 +195,10 @@
             dataCellLabel.innerText = chartjson.data[i].label;
             dataRow.appendChild(dataCellLabel);
 
-            for(j = 0; j < chartjson.ymax; j++) {
+            for(j = 0; j < chartjson.xmax; j++) {
                 var fillDiv = document.createElement("div");
                 var fillCell = document.createElement("td");
-                fillCell.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
+                fillCell.style.width = Math.floor(cellValueSize/chartjson.xmax).toString() + "px";
                 fillCell.style.height = "20px";
                 fillCell.style.textAlign = "center";
                 fillCell.style.color = chartjson.data[i].backgroundColor;
@@ -223,13 +223,13 @@
         xAxisMarkerRow.appendChild(xAxisBlankCell);
 
         //Create secitons for every day
-        for(i = 1; i <= chartjson.ymax; i++) {
+        for(i = 1; i <= chartjson.xmax; i++) {
             var dayCell = document.createElement("td");
             dayCell.style.borderTop = borderConfig;
             dayCell.style.borderRight = borderConfig;
             dayCell.style.margin = "0px";
             dayCell.style.padding = "0px";
-            dayCell.style.width = Math.floor(cellValueSize/chartjson.ymax).toString() + "px";
+            dayCell.style.width = Math.floor(cellValueSize/chartjson.xmax).toString() + "px";
             dayCell.style.height = "20px";
             dayCell.innerText = i;
             dayCell.style.textAlign = "center";
