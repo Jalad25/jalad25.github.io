@@ -90,6 +90,7 @@
             //Table and styling
             var chart = document.createElement('table');
             chart.style.color = chartjson.textColor;
+            chart.style.fontSize = "x-small";
 
             //Add y-axis title
             var yAxisTitleRow = document.createElement("tr");
@@ -98,6 +99,7 @@
             yAxisTitleCell.innerText = chartjson.ytitle;
             yAxisTitleCell.style.fontWeight = "bold";
             yAxisTitleCell.style.textAlign = "center";
+            yAxisTitleCell.style.fontSize = "initial";
             yAxisTitleRow.appendChild(yAxisTitleCell);
             chart.appendChild(yAxisTitleRow);
 
