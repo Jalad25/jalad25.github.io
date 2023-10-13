@@ -25,8 +25,8 @@
     //Constants
     var borderConfig = "1px solid " + chartjson.textColor;
     var chartWidthMax = 500;
-    var chartYWidthMax = 100;
-    var chartXWidthMax = 400;
+    var chartYWidthMax = 90;
+    var chartXWidthMax = 410;
     var numberOfMarkers = Math.floor(chartjson.xmax/chartjson.markerSpacing);
 
     // Build chart data
@@ -68,10 +68,10 @@
 
     //Create container
     var container = document.createElement('div');
-    container.style.paddingTop = "20px";
-    container.style.paddingBottom = "20px";
+    container.style.padding = "20px";
     container.style.backgroundColor = chartjson.backgroundColor;
     container.style.color = chartjson.textColor;
+    container.style.width = "600px";
     
     //Add title
     var chartTitle = document.createElement('h2');
@@ -84,8 +84,8 @@
         case 0:
         case 1:
             //Constants
-            var yTitleSize = ((fullSizeWidth * chartYWidthMax) / chartWidthMax)-30;
-            var xValueSize = ((fullSizeWidth * chartXWidthMax) / chartWidthMax)-30;
+            var yTitleSize = chartYWidthMax;
+            var xValueSize = chartXWidthMax;
 
             //Table and styling
             var chart = document.createElement('table');
